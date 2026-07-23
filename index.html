@@ -383,16 +383,52 @@
       <p class="subtitle" id="questionSubtitle">It'll be more fun with me, I promise.</p>
       <div class="btn-row">
         <button class="btn-yes" id="yesBtn" onclick="handleYes()">Yes! 🥰</button>
-        <button class="btn-no" id="noBtn" onmouseover="runAway(this)" onclick="handleNo()">No</button>
+        <button class="btn-no" id="noBtn" onmouseover="runAway(this); handleNo()" onclick="handleNo()">No</button>
       </div>
       <p id="no-message" class="no-msg"></p>
     </div>
   </section>
 
-  <!-- Time Picker (shown after Yes) -->
+  <!-- Pickup or Meet Up Question -->
+  <section id="pickup" class="page">
+    <div class="card wide">
+      <div class="emoji-big">🚗</div>
+      <h2>Should I pick you up?</h2>
+      <p class="subtitle">or would you rather we just meet up? 😊</p>
+      <div class="btn-row">
+        <button class="btn-yes" onclick="goTo('timepicker')">Pick me up! 🚗</button>
+        <button class="btn-outline" onclick="goTo('meetup')">Let's meet up 📍</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Meet Up Details -->
+  <section id="meetup" class="page">
+    <div class="card wide">
+      <div class="emoji-big">📍</div>
+      <h2>Where should we meet? 🥰</h2>
+      <p class="subtitle">
+        We're watching <strong>Spider-Man: Brand New Day</strong> 🕷️<br/>
+        on <strong>July 29, 2026</strong>
+      </p>
+      <form id="meetupForm" onsubmit="submitMeetup(event)">
+        <div class="form-group">
+          <label for="placeInput">Meet up place</label>
+          <input type="text" id="placeInput" placeholder="Type a place..." required />
+        </div>
+        <div class="form-group">
+          <label for="meetTimeInput">What time?</label>
+          <input type="time" id="meetTimeInput" required />
+        </div>
+        <button type="submit" class="btn-primary full-width">Let's Make It Official 💖</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Time Picker (pick up version) -->
   <section id="timepicker" class="page">
     <div class="card wide">
-      <div class="emoji-big">🗓️</div>
+      <div class="emoji-big"></div>
       <h2>What time should I pick you up? 🥰</h2>
       <p class="subtitle">
         We're watching <strong>Spider-Man: Brand New Day</strong> 🕷️<br/>
@@ -426,6 +462,10 @@
         <div class="detail-row">
           <span class="detail-icon">🕐</span>
           <span id="inv-time">TBD</span>
+        </div>
+        <div class="detail-row" id="inv-place-row" style="display:none;">
+          <span class="detail-icon">📍</span>
+          <span id="inv-place">TBD</span>
         </div>
         <div class="detail-row">
           <span class="detail-icon">🍿</span>
@@ -466,33 +506,7 @@
       document.getElementById('questionSubtitle').textContent = "Now let's set the time...";
       document.getElementById('no-message').textContent       = ''; // clear the message
 
-      setTimeout(() => goTo('timepicker'), 1800);
-    }
-
-    function handleNo() {
-      if (answered) return;
-      const msg    = document.getElementById('no-message');
-      const noBtn  = document.getElementById('noBtn');
-
-      msg.textContent = noMessages[noCount % noMessages.length];
-
-      // On the last message, move No behind Yes and make it unclickable
-      if (noCount >= noMessages.length - 1 && noBtn) {
-        const yesBtn = document.getElementById('yesBtn');
-        const rect   = yesBtn.getBoundingClientRect();
-        noBtn.style.transition    = 'all 0.5s ease';
-        noBtn.style.position      = 'fixed';
-        noBtn.style.left          = rect.left + 'px';
-        noBtn.style.top           = rect.top  + 'px';
-        noBtn.style.width         = rect.width  + 'px';
-        noBtn.style.height        = rect.height + 'px';
-        noBtn.style.zIndex        = '0';         // behind Yes
-        noBtn.style.pointerEvents = 'none';      // unclickable
-        noBtn.style.opacity       = '0';         // invisible
-        msg.textContent = 'Please Samsunget? 🙏';
-      }
-
-      noCount++;
+      setTimeout(() => goTo('pickup'), 1800);
     }
 
     // ===== "No" Button Run-Away =====
@@ -506,9 +520,45 @@
       "Please Samsunget? 🙏",
     ];
     let noCount = 0;
+    let lastNoTime = 0;
+
+    function handleNo() {
+      if (answered) return;
+      if (noCount >= noMessages.length) return;
+
+      // Throttle — once per 500ms so mouseover doesn't spam
+      const now = Date.now();
+      if (now - lastNoTime < 500) return;
+      lastNoTime = now;
+
+      const msg   = document.getElementById('no-message');
+      const noBtn = document.getElementById('noBtn');
+
+      msg.textContent = noMessages[noCount];
+
+      // On the last message, move No behind Yes and make it unclickable
+      if (noCount === noMessages.length - 1 && noBtn) {
+        const yesBtn = document.getElementById('yesBtn');
+        if (yesBtn) {
+          const rect = yesBtn.getBoundingClientRect();
+          noBtn.style.transition    = 'all 0.5s ease';
+          noBtn.style.position      = 'fixed';
+          noBtn.style.left          = rect.left + 'px';
+          noBtn.style.top           = rect.top  + 'px';
+          noBtn.style.width         = rect.width  + 'px';
+          noBtn.style.height        = rect.height + 'px';
+          noBtn.style.zIndex        = '0';
+          noBtn.style.pointerEvents = 'none';
+          noBtn.style.opacity       = '0';
+        }
+      }
+
+      noCount++;
+    }
 
     function runAway(btn) {
       if (answered) return;
+      if (noCount >= noMessages.length) return;
 
       // On last message, move No behind Yes instead of running away
       if (noCount >= noMessages.length - 1) {
@@ -553,18 +603,41 @@
     });
 
     // ===== Telegram Notification =====
-    function notifyMe(formattedTime) {
+    function notifyMe(formattedTime, place) {
       const token  = '8744812041:AAHeotBqxk9J1O3Y5i6qrf9iKyU03FJzY4M';
       const chatId = '5889174039';
-      const text   = `🎉 She said YES!\n\n🕐 She picked: ${formattedTime}\n📅 July 29, 2026\n🕷️ Spider-Man: Brand New Day\n\nGo get her! 💕`;
+      const placeText = place ? `\n📍 Meet up at: ${place}` : '\n🚗 She wants to be picked up!';
+      const text = `🎉 She said YES!\n\n🕐 Time: ${formattedTime}${placeText}\n📅 July 29, 2026\n🕷️ Spider-Man: Brand New Day\n\nGo get her! 💕`;
       fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ chat_id: chatId, text: text })
-      }).catch(() => {}); // silent fail — she won't see anything
+      }).catch(() => {});
     }
 
-    // ===== Time Form Submission =====
+    // ===== Meet Up Form Submission =====
+    function submitMeetup(e) {
+      e.preventDefault();
+      const timeVal  = document.getElementById('meetTimeInput').value;
+      const placeVal = document.getElementById('placeInput').value.trim();
+      if (!timeVal || !placeVal) return;
+
+      const [hours, minutes] = timeVal.split(':');
+      const h      = parseInt(hours);
+      const ampm   = h >= 12 ? 'PM' : 'AM';
+      const hour12 = h % 12 || 12;
+      const formattedTime = `${hour12}:${minutes} ${ampm}`;
+
+      document.getElementById('inv-time').textContent       = formattedTime;
+      document.getElementById('inv-place').textContent      = placeVal;
+      document.getElementById('inv-place-row').style.display = 'flex';
+
+      notifyMe(formattedTime, placeVal);
+      goTo('invite');
+      spawnHearts();
+    }
+
+    // ===== Time Form Submission (pick up) =====
     function submitTime(e) {
       e.preventDefault();
       const timeVal = document.getElementById('timeInput').value;
@@ -577,7 +650,7 @@
       const formattedTime = `${hour12}:${minutes} ${ampm}`;
 
       document.getElementById('inv-time').textContent = formattedTime;
-      notifyMe(formattedTime);
+      notifyMe(formattedTime, null);
       goTo('invite');
       spawnHearts();
     }
