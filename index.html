@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>💌 I have something to ask you...</title>
+
+  <!-- Open Graph / Instagram Preview -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="💌 I have something to ask you..." />
+  <meta property="og:description" content="Open this. It's important 🥺" />
+  <meta property="og:url" content="https://quirkjmy.github.io/invitation/" />
+  <style>
+    /* ===== Base ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: linear-gradient(135deg, #ffe4e8 0%, #ffd6e0 40%, #fce4ec 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ===== Pages ===== */
+    .page {
+      display: none;
+      width: 100%;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      animation: fadeIn 0.6s ease;
+    }
+    .page.active { display: flex; }
+    #invite.active {
+      align-items: flex-start;
+      padding-top: 32px;
+      padding-bottom: 32px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== Card ===== */
+    .card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 48px 40px;
+      text-align: center;
+      box-shadow: 0 12px 48px rgba(220, 80, 120, 0.18);
+      max-width: 420px;
+      width: 100%;
+    }
+    .card.wide { max-width: 580px; }
+
+    .emoji-big {
+      font-size: 64px;
+      margin-bottom: 16px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%       { transform: scale(1.12); }
+    }
+
+    h1 { font-size: 2.4rem; color: #c0395a; margin-bottom: 8px; }
+    h2 { font-size: 1.9rem; color: #c0395a; margin-bottom: 8px; }
+    .subtitle { color: #888; font-size: 1rem; margin-bottom: 28px; line-height: 1.5; }
+
+    /* ===== Buttons ===== */
+    .btn-primary {
+      background: linear-gradient(135deg, #e91e63, #f06292);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 36px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(233, 30, 99, 0.35);
+    }
+    .btn-primary.full-width { width: 100%; margin-top: 8px; }
+
+    .btn-outline {
+      background: transparent;
+      color: #e91e63;
+      border: 2px solid #e91e63;
+      border-radius: 50px;
+      padding: 12px 28px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      font-family: inherit;
+    }
+    .btn-outline:hover { background: #fce4ec; }
+
+    .btn-row {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .btn-yes {
+      background: linear-gradient(135deg, #e91e63, #f06292);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 40px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+      position: relative;
+      z-index: 10;
+    }
+    .btn-yes:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 20px rgba(233, 30, 99, 0.35);
+    }
+    .btn-no {
+      background: #f1f1f1;
+      color: #aaa;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 32px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+      font-family: inherit;
+    }
+    .no-msg {
+      margin-top: 14px;
+      color: #e91e63;
+      font-size: 0.9rem;
+      min-height: 20px;
+      font-style: italic;
+    }
+
+    /* Swapped button states */
+    .btn-yes-swap {
+      background: linear-gradient(135deg, #e91e63, #f06292);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 40px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      font-family: inherit;
+      animation: popIn 0.4s ease;
+    }
+    .btn-no-swap {
+      background: #f1f1f1;
+      color: #aaa;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 32px;
+      font-size: 1rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    @keyframes popIn {
+      0%   { transform: scale(0.8); opacity: 0; }
+      60%  { transform: scale(1.12); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* ===== Form ===== */
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #c0395a;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    textarea {
+      width: 100%;
+      border: 2px solid #f8bbd0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 1rem;
+      font-family: inherit;
+      color: #444;
+      transition: border-color 0.2s;
+      outline: none;
+      background: #fff9fb;
+    }
+    input:focus, textarea:focus { border-color: #e91e63; }
+
+    /* ===== Invite Card ===== */
+    .invite-card {
+      position: relative;
+      text-align: center;
+      background: linear-gradient(160deg, #fff5f8 0%, #ffffff 100%);
+      border: 2px solid #f8bbd0;
+    }
+    .ribbon {
+      background: linear-gradient(135deg, #e91e63, #f06292);
+      color: #fff;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      padding: 6px 24px;
+      border-radius: 0 0 16px 16px;
+      display: inline-block;
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+    .invite-details {
+      background: #fff5f8;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: left;
+    }
+    .detail-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px dashed #f8bbd0;
+      font-size: 0.97rem;
+      color: #444;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+    .invite-note {
+      background: #fce4ec;
+      border-left: 4px solid #e91e63;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      font-style: italic;
+      color: #666;
+      text-align: left;
+    }
+    .invite-footer {
+      color: #c0395a;
+      font-size: 1.05rem;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .share-msg {
+      text-align: center;
+      margin-top: 10px;
+      color: #e91e63;
+      font-style: italic;
+      font-size: 0.9rem;
+      min-height: 20px;
+    }
+
+    /* ===== Floating Hearts Background ===== */
+    .hearts-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    /* ===== Print ===== */
+    @media print {
+      body { background: #fff; }
+      .page { display: none !important; }
+      #invite { display: flex !important; }
+      .action-row, .share-msg { display: none; }
+      .invite-card { box-shadow: none; border: 2px solid #f8bbd0; }
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 500px) {
+      .card { padding: 32px 20px; }
+      h1 { font-size: 1.9rem; }
+      h2 { font-size: 1.5rem; }
+
+      /* Bigger tap targets on mobile */
+      .btn-yes, .btn-yes-swap {
+        padding: 16px 44px;
+        font-size: 1.15rem;
+      }
+      .btn-no, .btn-no-swap {
+        padding: 16px 36px;
+        font-size: 1.05rem;
+      }
+      .btn-primary {
+        padding: 16px 36px;
+        font-size: 1.05rem;
+      }
+      .btn-outline {
+        padding: 14px 28px;
+      }
+
+      /* Invite card spacing */
+      .invite-card { padding: 28px 16px; }
+      .action-row { flex-direction: column; align-items: center; }
+      .action-row button { width: 100%; max-width: 280px; }
+      /* Emoji sizes */
+      .emoji-big { font-size: 52px; }
+      .spidey-banner { font-size: 56px; }
+    }
+
+    /* ===== Spider-Man Invite ===== */
+    .spidey-banner {
+      font-size: 72px;
+      margin-bottom: 8px;
+      animation: webSwing 2.5s ease-in-out infinite;
+      display: inline-block;
+    }
+    @keyframes webSwing {
+      0%, 100% { transform: rotate(-10deg) scale(1); }
+      50%       { transform: rotate(10deg) scale(1.1); }
+    }
+
+    .invite-movie-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #b71c1c;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+      text-shadow: 0 1px 0 rgba(0,0,0,0.08);
+    }
+
+    .invite-card::before,
+    .invite-card::after {
+      content: '';
+      position: absolute;
+      background: radial-gradient(circle at top left, rgba(233,30,99,0.07) 0%, transparent 70%);
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .invite-card::before { top: -60px; left: -60px; }
+    .invite-card::after  { bottom: -60px; right: -60px; }
+  </style>
+</head>
+<body>
+
+  <!-- Landing Page -->
+  <section id="landing" class="page active">
+    <div class="hearts-bg" aria-hidden="true"></div>
+    <div class="card">
+      <div class="emoji-big">💌</div>
+      <h1>Hi Samantha!</h1>
+      <p class="subtitle">I've been thinking... and I have a very important question to ask you.</p>
+      <button class="btn-primary" onclick="goTo('question')">Open the Letter</button>
+    </div>
+  </section>
+
+  <!-- The Big Question -->
+  <section id="question" class="page">
+    <div class="card wide">
+      <div class="emoji-big" id="questionEmoji">🌹</div>
+      <h2 id="questionText">Would you like to watch Spider-Man: Brand New Day with me?</h2>
+      <p class="subtitle" id="questionSubtitle">It'll be more fun with me, I promise.</p>
+      <div class="btn-row">
+        <button class="btn-yes" id="yesBtn" onclick="handleYes()">Yes! 🥰</button>
+        <button class="btn-no" id="noBtn" onmouseover="runAway(this)" onclick="handleNo()">No</button>
+      </div>
+      <p id="no-message" class="no-msg"></p>
+    </div>
+  </section>
+
+  <!-- Time Picker (shown after Yes) -->
+  <section id="timepicker" class="page">
+    <div class="card wide">
+      <div class="emoji-big">🗓️</div>
+      <h2>What time should I pick you up? 🥰</h2>
+      <p class="subtitle">
+        We're watching <strong>Spider-Man: Brand New Day</strong> 🕷️<br/>
+        on <strong>July 29, 2026</strong> — just tell me when!
+      </p>
+      <form id="timeForm" onsubmit="submitTime(event)">
+        <div class="form-group" style="max-width: 260px; margin: 0 auto 24px;">
+          <label for="timeInput">Pick a Time</label>
+          <input type="time" id="timeInput" required />
+        </div>
+        <button type="submit" class="btn-primary full-width">Let's Make It Official 💖</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Invitation Preview -->
+  <section id="invite" class="page">
+    <div class="card wide invite-card" id="inviteCard">
+      <div class="ribbon">Invitation 💌</div>
+      <h2 id="inv-title">You're Invited!</h2>
+      <p class="invite-movie-title">Spider-Man: Brand New Day</p>
+      <div class="invite-details">
+        <div class="detail-row">
+          <span class="detail-icon">🎬</span>
+          <span>Movie Date</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-icon">📅</span>
+          <span>Tuesday, July 29, 2026</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-icon">🕐</span>
+          <span id="inv-time">TBD</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-icon">🍿</span>
+          <span>Popcorn &amp; good company included</span>
+        </div>
+      </div>
+      <div class="invite-note">
+        <p>"I can't think of anyone else to invite but you, I'd rather watch it alone than with someone else.😆"</p>
+      </div>
+      <div class="invite-footer" id="inv-footer">THIS IS A DATE!!🥰</div>
+    </div>
+    <div id="share-msg" class="share-msg"></div>
+  </section>
+
+  <script>
+    // ===== Page Navigation =====
+    function goTo(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById(pageId);
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ===== Yes / No Swap Logic =====
+    let answered = false;
+
+    function handleYes() {
+      if (answered) return;
+      answered = true;
+
+      const yesBtn = document.getElementById('yesBtn');
+      const noBtn  = document.getElementById('noBtn');
+      if (yesBtn) yesBtn.remove();
+      if (noBtn)  noBtn.remove();
+
+      document.getElementById('questionEmoji').textContent    = '🎉';
+      document.getElementById('questionText').textContent     = 'She said YES! 🥳';
+      document.getElementById('questionSubtitle').textContent = "Now let's set the time...";
+      document.getElementById('no-message').textContent       = ''; // clear the message
+
+      setTimeout(() => goTo('timepicker'), 1800);
+    }
+
+    function handleNo() {
+      if (answered) return;
+      const msg    = document.getElementById('no-message');
+      const noBtn  = document.getElementById('noBtn');
+
+      msg.textContent = noMessages[noCount % noMessages.length];
+
+      // On the last message, move No behind Yes and make it unclickable
+      if (noCount >= noMessages.length - 1 && noBtn) {
+        const yesBtn = document.getElementById('yesBtn');
+        const rect   = yesBtn.getBoundingClientRect();
+        noBtn.style.transition    = 'all 0.5s ease';
+        noBtn.style.position      = 'fixed';
+        noBtn.style.left          = rect.left + 'px';
+        noBtn.style.top           = rect.top  + 'px';
+        noBtn.style.width         = rect.width  + 'px';
+        noBtn.style.height        = rect.height + 'px';
+        noBtn.style.zIndex        = '0';         // behind Yes
+        noBtn.style.pointerEvents = 'none';      // unclickable
+        noBtn.style.opacity       = '0';         // invisible
+        msg.textContent = 'Please Samsunget? 🙏';
+      }
+
+      noCount++;
+    }
+
+    // ===== "No" Button Run-Away =====
+    const noMessages = [
+      "Dali na te🥺",
+      "Sure ka na ba dyan?",
+      "Feeling ko YES talaga gusto mong pindutin",
+      "Engkkkk Mali!",
+      "Kaya mo yan!",
+      "Last chance",
+      "Please Samsunget? 🙏",
+    ];
+    let noCount = 0;
+
+    function runAway(btn) {
+      if (answered) return;
+
+      // On last message, move No behind Yes instead of running away
+      if (noCount >= noMessages.length - 1) {
+        const yesBtn = document.getElementById('yesBtn');
+        if (yesBtn) {
+          const rect = yesBtn.getBoundingClientRect();
+          btn.style.transition    = 'all 0.5s ease';
+          btn.style.position      = 'fixed';
+          btn.style.left          = rect.left + 'px';
+          btn.style.top           = rect.top  + 'px';
+          btn.style.width         = rect.width  + 'px';
+          btn.style.height        = rect.height + 'px';
+          btn.style.zIndex        = '0';
+          btn.style.pointerEvents = 'none';
+          btn.style.opacity       = '0';
+        }
+        return;
+      }
+
+      // Normal run away
+      const vw = window.innerWidth  - btn.offsetWidth  - 20;
+      const vh = window.innerHeight - btn.offsetHeight - 20;
+      btn.style.position   = 'fixed';
+      btn.style.left       = Math.floor(Math.random() * vw) + 'px';
+      btn.style.top        = Math.floor(Math.random() * vh) + 'px';
+      btn.style.zIndex     = '9999';
+      btn.style.transition = 'left 0.3s, top 0.3s';
+    }
+
+    // Mobile: run away on touch
+    document.addEventListener('DOMContentLoaded', () => {
+      const noBtn = document.getElementById('noBtn');
+      if (noBtn) {
+        noBtn.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          if (noCount < noMessages.length - 1) {
+            runAway(noBtn); // run away only before last message
+          }
+          handleNo();
+        }, { passive: false });
+      }
+    });
+
+    // ===== Telegram Notification =====
+    function notifyMe(formattedTime) {
+      const token  = '8744812041:AAHeotBqxk9J1O3Y5i6qrf9iKyU03FJzY4M';
+      const chatId = '5889174039';
+      const text   = `🎉 She said YES!\n\n🕐 She picked: ${formattedTime}\n📅 July 29, 2026\n🕷️ Spider-Man: Brand New Day\n\nGo get her! 💕`;
+      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text: text })
+      }).catch(() => {}); // silent fail — she won't see anything
+    }
+
+    // ===== Time Form Submission =====
+    function submitTime(e) {
+      e.preventDefault();
+      const timeVal = document.getElementById('timeInput').value;
+      if (!timeVal) return;
+
+      const [hours, minutes] = timeVal.split(':');
+      const h      = parseInt(hours);
+      const ampm   = h >= 12 ? 'PM' : 'AM';
+      const hour12 = h % 12 || 12;
+      const formattedTime = `${hour12}:${minutes} ${ampm}`;
+
+      document.getElementById('inv-time').textContent = formattedTime;
+      notifyMe(formattedTime);
+      goTo('invite');
+      spawnHearts();
+    }
+
+    // ===== Floating Hearts =====
+    function spawnHearts() {
+      for (let i = 0; i < 22; i++) {
+        setTimeout(() => createHeart(), i * 100);
+      }
+    }
+
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.textContent = ['💖', '💕', '🌹', '✨', '💗', '🕷️'][Math.floor(Math.random() * 6)];
+      heart.style.cssText = `
+        position: fixed;
+        font-size: ${16 + Math.random() * 26}px;
+        left: ${Math.random() * 100}vw;
+        top: 100vh;
+        pointer-events: none;
+        z-index: 9999;
+        animation: floatUp ${2.5 + Math.random() * 2}s ease-out forwards;
+      `;
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 5000);
+    }
+
+    const floatStyle = document.createElement('style');
+    floatStyle.textContent = `
+      @keyframes floatUp {
+        0%   { transform: translateY(0) scale(1); opacity: 1; }
+        80%  { opacity: 0.8; }
+        100% { transform: translateY(-110vh) scale(0.5) rotate(20deg); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(floatStyle);
+
+    // ===== Share =====
+    function shareInvite() {
+      const msg = document.getElementById('share-msg');
+      if (navigator.share) {
+        navigator.share({
+          title: '🕷️ Spider-Man Date Invitation 💌',
+          text: "You've received a special movie date invitation! 💕",
+          url: window.location.href
+        }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+          msg.textContent = '🔗 Link copied to clipboard!';
+          setTimeout(() => msg.textContent = '', 3000);
+        }).catch(() => {
+          msg.textContent = 'Copy this URL to share: ' + window.location.href;
+        });
+      }
+    }
+
+    // ===== Ambient Hearts on Landing =====
+    function startAmbientHearts() {
+      setInterval(() => {
+        if (document.getElementById('landing').classList.contains('active')) {
+          createHeart();
+        }
+      }, 900);
+    }
+    startAmbientHearts();
+  </script>
+</body>
+</html>
